@@ -1,0 +1,68 @@
+body {
+	font-family: Helvetica, Arial, "sans serif";
+	font-size: 12px;
+}
+
+video, #info, #description {
+	display: none;
+}
+
+#webcam {
+    display:none;
+    opacity: 0;
+}
+
+#video-demo {
+	display: none;
+	position: absolute;
+	top: 150px;
+	left: 10px;
+}
+
+#canvas-source {
+	display: none;
+	position: absolute;
+	top: 40px;
+	left: 10px;
+}
+
+#canvas-blended {
+	display: none;
+	position: absolute;
+	top: 407px;
+	left: 500px;
+	width: 150px;
+	height: 113px;
+}
+
+#kit {
+	display:none;
+	position: absolute;
+	top: 40px;
+	left: 10px;
+	margin: 0px;
+	padding: 0px;
+	border: 1px solid yellow;
+}
+
+#kit #front {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index:1;
+	width: 640px;
+	margin: 0px;
+	padding: 0px;
+}
+#kit #back img, #bongo #front img {
+	margin: 0px;
+	padding: 0px;
+}
+#kit #front img {
+	position: absolute;
+}
+#drum0 { left: 0px; top: 350px; width:150px;}
+#drum1 { left: 155px; top: 350px; width:150px;}
+#drum2 { left: 310px; top: 350px; width:150px;}
+#drum3 { left: 465px; top: 350px; width:200px;}
+
