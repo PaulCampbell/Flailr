@@ -1,0 +1,6 @@
+*.sw*
+*/.tern-port
+.idea/
+.DS_Store/
+node_modules/
+site/npm-debug.log
