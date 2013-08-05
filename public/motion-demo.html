@@ -1,18 +1,41 @@
-(function() {
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
 
-	function hasGetUserMedia() {
-		// Note: Opera builds are unprefixed.
-		return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
-			navigator.mozGetUserMedia || navigator.msGetUserMedia);
-	}
+  <style>
+
+  </style>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+  <script src="/libs/buffer-loader.js"></script>
+  <link href="style.css" type="text/css"  rel="stylesheet"/>
 
 
+</head>
+<body>
+<video id="webcam" autoplay width="640" height="480"></video>
 
+<canvas id="canvas-source" width="640" height="480"></canvas>
+
+<canvas id="canvas-blended" width="640" height="480"></canvas>
+
+<div id="kit">
+ 	<div id="front">
+ 		<img id="drum0" width="150" src="images/snare.png"/>
+ 		<img id="drum1" width="150" src="images/thunderbird.png"/>
+ 		<img id="drum2" width="150" src="images/tom.png"/>
+ 		<img id="drum3" width="150" src="images/tom.png"/>
+ 	</div>
+ </div>
+
+<script>
+(function(document) {
 	var webcamError = function(e) {
 		alert('Webcam error!', e);
 	};
 
-	var video = $('#webcam')[0];
+	var video = document.getElementById('webcam');
+
 
 	if (navigator.getUserMedia) {
 		navigator.getUserMedia({audio: false, video: true}, function(stream) {
@@ -25,93 +48,43 @@
 			initialize();
 		}, webcamError);
 	} else {
-		//video.src = 'somevideo.webm'; // fallback.
+		alert('browser does not support getUserMedia')
 	}
 
-	var AudioContext = (
-		window.AudioContext ||
-		window.webkitAudioContext ||
-		null
-	);
-
-	var notesPos = [70, 220, 380, 530];
+	var hitTargetPositions = [70, 220, 380, 530];
 
 	var timeOut, lastImageData;
-	var canvasSource = $("#canvas-source")[0];
-	var canvasBlended = $("#canvas-blended")[0];
+	var canvasSource = document.getElementById('canvas-source');
+	var canvasBlended = document.getElementById('canvas-blended')
 
 	var contextSource = canvasSource.getContext('2d');
 	var contextBlended = canvasBlended.getContext('2d');
 
-	var soundContext;
-	var bufferLoader;
-	var notes = [];
+	var hitTargets = [];
 
 	// mirror video
 	contextSource.translate(canvasSource.width, 0);
 	contextSource.scale(-1, 1);
 
-	var c = 5;
 
 	function initialize() {
-		if (!AudioContext) {
-			alert("AudioContext not supported!");
-		}
-		else {
-			loadSounds();
-		}
-	}
-
-	function loadSounds() {
-		soundContext = new AudioContext();
-		bufferLoader = new BufferLoader(soundContext,
-			[
-				'sounds/snare.mp3',
-				'sounds/toma.mp3',
-				'sounds/tom.mp3',
-				'sounds/bass.mp3'
-			],
-			finishedLoading
-		);
-		bufferLoader.load();
-	}
-
-	function finishedLoading(bufferList) {
-		for (var i=0; i<4; i++) {
-			var source = soundContext.createBufferSource();
-			source.buffer = bufferList[i];
-			source.connect(soundContext.destination);
-			var note = {
-				note: source,
+		for (var i=0; i < hitTargetPositions.length; i++) {
+			var hitTarget = {
 				ready: true,
 				visual: $("#drum" + i)[0]
 			};
-			note.area = {x:notesPos[i], y:350, width:note.visual.width, height:10};
-			notes.push(note);
+			hitTarget.area = {x:hitTargetPositions[i], y:350, width:hitTarget.visual.width, height:10};
+			hitTargets.push(hitTarget);
 		}
 		start();
 	}
 
-	function playSound(obj) {
-		if (!obj.ready) return;
-		var source = soundContext.createBufferSource();
-		source.buffer = obj.note.buffer;
-		source.connect(soundContext.destination);
-		source.noteOn(0);
-		obj.ready = false;
-		// throttle the note
-		setTimeout(setNoteReady, 400, obj);
-	}
-
-	function setNoteReady(obj) {
-		obj.ready = true;
-	}
 
 	function start() {
 		$(canvasSource).show();
-		$(canvasBlended).hide();
+		// $(canvasBlended).show();
 		$("#kit").show();
-		$("#description").show();
+	  //	$("#description").show();
 		update();
 	}
 
@@ -144,7 +117,6 @@
 	}
 
 	function fastAbs(value) {
-		// funky bitwise, equal Math.abs
 		return (value ^ (value >> 31)) - (value >> 31);
 	}
 
@@ -152,18 +124,6 @@
 		return (value > 0x15) ? 0xFF : 0;
 	}
 
-	function difference(target, data1, data2) {
-		// blend mode difference
-		if (data1.length != data2.length) return null;
-		var i = 0;
-		while (i < (data1.length * 0.25)) {
-			target[4*i] = data1[4*i] == 0 ? 0 : fastAbs(data1[4*i] - data2[4*i]);
-			target[4*i+1] = data1[4*i+1] == 0 ? 0 : fastAbs(data1[4*i+1] - data2[4*i+1]);
-			target[4*i+2] = data1[4*i+2] == 0 ? 0 : fastAbs(data1[4*i+2] - data2[4*i+2]);
-			target[4*i+3] = 0xFF;
-			++i;
-		}
-	}
 
 	function differenceAccuracy(target, data1, data2) {
 		if (data1.length != data2.length) return null;
@@ -183,7 +143,7 @@
 	function checkAreas() {
 		for (var r=0; r<4; ++r) {
 			// get the pixels in a note area from the blended image
-			var blendedData = contextBlended.getImageData(notes[r].area.x, notes[r].area.y, notes[r].area.width, notes[r].area.height);
+			var blendedData = contextBlended.getImageData(hitTargets[r].area.x, hitTargets[r].area.y, hitTargets[r].area.width, hitTargets[r].area.height);
 			var i = 0;
 			var average = 0;
 			// loop over the pixels
@@ -194,14 +154,16 @@
 			}
 			// calculate an average between of the color values of the note area
 			average = Math.round(average / (blendedData.data.length * 0.25));
-			if (average > 130) {
-				// over a small limit, consider that a movement is detected
-				// play a note and show a visual feedback to the user
-				playSound(notes[r]);
+			if (average > 40) {
+				console.log({targetIndex:r, vigour: average})
 
 			}
 		}
 	}
 
 
-})();
+})(document);
+
+</script>
+</body>
+</html>
