@@ -17,11 +17,11 @@
   flailr.showDifferenceCanvas = false;
   flailr.width = 640;
   flailr.height = 480;
-  flailr.sensitivity = 150;
+  flailr.sensitivity = 100;
   flailr.hitTargets = [
-        {id: 'snare', x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
-        {id: 'tom', x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
-      ];
+      {id: 'target1', x: 70, y: 350, width: 120, height: 120, showOutline:true},
+      {id: 'target2', x: 360, y: 350, width: 120, height: 120, showOutline:true}
+    ];
 
   flailr.addEventListener('targetHit', function(e) {
     console.log('target-hit: ' + JSON.stringify(e))

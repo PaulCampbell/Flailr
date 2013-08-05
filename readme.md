@@ -1,6 +1,3 @@
-== WORK IN PROGRESS - NOT READY FOR USE YET!
-
-
 == Flailr js
 
 ### verb
@@ -135,7 +132,7 @@ Now you just call start:
     </script>
     </html>
 
-_As noted - check the exmples folder!_
+_As noted - check the [examples folder](tree/master/public/examples)!_
 
 ## Todo
 

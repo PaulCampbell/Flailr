@@ -84,8 +84,13 @@ var Flailr = function () {
     // add hitTargets to the canvas...
     for (var i = 0; i < self.hitTargets.length; i++) {
       var hitTarget = document.createElement('img')
-      hitTarget.setAttribute('src', self.hitTargets[i].graphic)
+      if(self.hitTargets[i].graphic) {
+        hitTarget.setAttribute('src', self.hitTargets[i].graphic)
+      }
       hitTarget.setAttribute("style", "position: absolute; left: " + self.hitTargets[i].x + "px; top: " + self.hitTargets[i].y + "px; width:" + self.hitTargets[i].width + "px;  height:" + self.hitTargets[i].height + "px;");
+      if(self.hitTargets[i].showOutline) {
+        hitTarget.setAttribute("style", "border:solid 1px red; " + hitTarget.getAttribute('style'))
+      }
       console.log('adding ' + hitTarget)
       container.appendChild(hitTarget)
     }
