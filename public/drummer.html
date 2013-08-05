@@ -19,9 +19,13 @@
   flailr.height = 480;
   flailr.sensitivity = 150;
   flailr.hitTargets = [
-        {x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
-        {x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
+        {id: 'snare', x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
+        {id: 'tom', x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
       ];
+
+  flailr.addEventListener('targetHit', function(e) {
+    console.log('target-hit: ' + JSON.stringify(e))
+  })
 
   flailr.start();
 

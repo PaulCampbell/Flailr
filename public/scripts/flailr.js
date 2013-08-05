@@ -1,5 +1,6 @@
 var Flailr = function () {
 
+
   var flailr = {};
   var canvasSource, video, canvasBlended, contextSource, contextBlended, timeOut, lastImageData, container;
 
@@ -8,6 +9,12 @@ var Flailr = function () {
   flailr.sensitivity = 60;
   flailr.showVideo = true;
   flailr.showDifferenceCanvas = false;
+
+  flailr.addEventListener = function(type,listener) {
+    eventListeners.push({type:type, listener: listener})
+  }
+
+  var eventListeners = [];
 
   flailr.start = function(){
     var self = this;
@@ -142,6 +149,18 @@ var Flailr = function () {
     }
   }
 
+  function raiseEvent(type, e) {
+    var appropriateListeners = [];
+    for (var i = 0; i < eventListeners.length; ++i) {
+      if(eventListeners[i].type == type) {
+        appropriateListeners.push(eventListeners[i]);
+      }
+      for (var r = 0; r < appropriateListeners.length; ++r) {
+        appropriateListeners[r].listener(e)
+      }
+    }
+  }
+
   function checkAreas(self) {
     for (var r = 0; r < self.hitTargets.length; ++r) {
       // get the pixels in a note area from the blended image
@@ -157,7 +176,7 @@ var Flailr = function () {
       // calculate an average between of the color values of the note area
       average = Math.round(average / (blendedData.data.length * 0.25));
       if (average > self.sensitivity) {
-        console.log({targetIndex: r, vigour: average})
+        raiseEvent('targetHit', {vigour: average, hitTarget: self.hitTargets[r]})
       }
     }
   }

@@ -82,10 +82,20 @@ This is an array of hitTargets.  A hitTarget has an x and y position (position o
 a graphic (if you want the hitTarget to be visible.  When there is movement over the hit target (above the required sensitivity
 level) a hit event will be raised.
 
+#### addEventListener
+
+          flailr.addEventListener('targetHit', function(e) {
+            console.log('target-hit: ' + JSON.stringify(e))
+          })
+
+So, this is just to add functions to be called when certain events are raised. At the moment the only event that flailr will raise
+is a `targetHit` event
 
 Now you just call start:
 
-        flailr.start().
+        flailr.start()
+
+
 
 ### All together now
     <body>
@@ -103,9 +113,14 @@ Now you just call start:
                 {x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
                 {x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
               ];
+          flailr.addEventListener('targetHit', function(e) {
+            console.log('target-hit: ' + JSON.stringify(e))
+          })
           flailr.start();
       </script>
     </body>
+
+_As noted - check the exmples folder!_
 
 ## Todo
 
@@ -113,4 +128,9 @@ Now you just call start:
  - Do we like the instantiating with the `new` keyword? Possibly replace this?
  - Check out browser support.
  - Figure out how the hell you test a library that depends on web-cam interaction
+ - Get it to raise gesture events
+   - SwipeLeftToRight
+   - SwipeRightToLeft
+   - SwipeDown
+   - SwipeUp
 
