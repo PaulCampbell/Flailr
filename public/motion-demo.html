@@ -13,11 +13,9 @@
 
 </head>
 <body>
-<video id="webcam" autoplay width="640" height="480"></video>
+  <div id="motion-capture">
 
-<canvas id="canvas-source" width="640" height="480"></canvas>
-
-<canvas id="canvas-blended" width="640" height="480"></canvas>
+  </div>
 
 <div id="kit">
  	<div id="front">
@@ -34,7 +32,27 @@
 		alert('Webcam error!', e);
 	};
 
-	var video = document.getElementById('webcam');
+  var container = document.getElementById('motion-capture')
+
+  var video = document.createElement('video')
+  video.id = 'webcam'
+  video.setAttribute("width","640") ;
+  video.setAttribute("autoplay","autoplay") ;
+  video.setAttribute("height","480");
+  container.appendChild(video)
+
+  var canvasSource = document.createElement('canvas');
+  canvasSource.setAttribute("width","640")
+  canvasSource.setAttribute("height","480");
+  canvasSource.id = 'canvas-source'
+  container.appendChild(canvasSource)
+
+  var canvasBlended = document.createElement('canvas');
+  canvasBlended.setAttribute("width","640")
+  canvasBlended.setAttribute("height","480");
+  canvasBlended.id = 'canvas-blended'
+  container.appendChild(canvasBlended)
+
 
 
 	if (navigator.getUserMedia) {
