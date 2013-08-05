@@ -3,28 +3,12 @@
 <head>
   <title></title>
 
-  <style>
-
-  </style>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
-  <script src="/libs/buffer-loader.js"></script>
-  <link href="style.css" type="text/css"  rel="stylesheet"/>
-
-
 </head>
 <body>
   <div id="motion-capture">
 
   </div>
 
-<div id="kit">
- 	<div id="front">
- 		<img id="drum0" width="150" src="images/snare.png"/>
- 		<img id="drum1" width="150" src="images/thunderbird.png"/>
- 		<img id="drum2" width="150" src="images/tom.png"/>
- 		<img id="drum3" width="150" src="images/tom.png"/>
- 	</div>
- </div>
 
 <script>
 (function(document) {
@@ -32,6 +16,7 @@
 		alert('Webcam error!', e);
 	};
 
+  // add all the bits to the page.
   var container = document.getElementById('motion-capture')
 
   var video = document.createElement('video')
@@ -39,6 +24,7 @@
   video.setAttribute("width","640") ;
   video.setAttribute("autoplay","autoplay") ;
   video.setAttribute("height","480");
+  video.setAttribute("style","display:none;");
   container.appendChild(video)
 
   var canvasSource = document.createElement('canvas');
@@ -51,6 +37,7 @@
   canvasBlended.setAttribute("width","640")
   canvasBlended.setAttribute("height","480");
   canvasBlended.id = 'canvas-blended'
+  canvasBlended.setAttribute("style","display:none;");
   container.appendChild(canvasBlended)
 
 
@@ -69,7 +56,10 @@
 		alert('browser does not support getUserMedia')
 	}
 
-	var hitTargetPositions = [70, 220, 380, 530];
+	var hitTargets = [
+    {x:70, y:350, width:120, height:120, graphic: '/images/snare.png'},
+    {x:400, y:350, width:120, height:120, graphic: '/images/tom.png'}
+  ];
 
 	var timeOut, lastImageData;
 	var canvasSource = document.getElementById('canvas-source');
@@ -78,7 +68,6 @@
 	var contextSource = canvasSource.getContext('2d');
 	var contextBlended = canvasBlended.getContext('2d');
 
-	var hitTargets = [];
 
 	// mirror video
 	contextSource.translate(canvasSource.width, 0);
@@ -86,23 +75,20 @@
 
 
 	function initialize() {
-		for (var i=0; i < hitTargetPositions.length; i++) {
-			var hitTarget = {
-				ready: true,
-				visual: $("#drum" + i)[0]
-			};
-			hitTarget.area = {x:hitTargetPositions[i], y:350, width:hitTarget.visual.width, height:10};
-			hitTargets.push(hitTarget);
-		}
+		// add hitTargets to page...
+    for (var i = 0; i < hitTargets.length; i++) {
+      var hitTarget = document.createElement('img')
+      hitTarget.setAttribute('src', hitTargets[i].graphic)
+      hitTarget.setAttribute("style","position: absolute; left: " + hitTargets[i].x + "px; top: " + hitTargets[i].y + "px; width:" + hitTargets[i].width + "px;  height:" + hitTargets[i].height + "px;");
+      hitTarget.setAttribute("style", hitTarget.getAttribute('style') + "border:solid 1px red");
+      console.log('adding ' + hitTarget)
+      container.appendChild(hitTarget)
+    }
 		start();
 	}
 
 
 	function start() {
-		$(canvasSource).show();
-		// $(canvasBlended).show();
-		$("#kit").show();
-	  //	$("#description").show();
 		update();
 	}
 
@@ -159,9 +145,9 @@
 	}
 
 	function checkAreas() {
-		for (var r=0; r<4; ++r) {
+		for (var r=0; r<hitTargets.length; ++r) {
 			// get the pixels in a note area from the blended image
-			var blendedData = contextBlended.getImageData(hitTargets[r].area.x, hitTargets[r].area.y, hitTargets[r].area.width, hitTargets[r].area.height);
+			var blendedData = contextBlended.getImageData(hitTargets[r].x, hitTargets[r].y, hitTargets[r].width, hitTargets[r].height);
 			var i = 0;
 			var average = 0;
 			// loop over the pixels
