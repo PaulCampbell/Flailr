@@ -21,20 +21,20 @@
 
   var video = document.createElement('video')
   video.id = 'webcam'
-  video.setAttribute("width","640") ;
+  video.setAttribute("width","840") ;
   video.setAttribute("autoplay","autoplay") ;
   video.setAttribute("height","480");
   video.setAttribute("style","display:none;");
   container.appendChild(video)
 
   var canvasSource = document.createElement('canvas');
-  canvasSource.setAttribute("width","640")
+  canvasSource.setAttribute("width","840")
   canvasSource.setAttribute("height","480");
   canvasSource.id = 'canvas-source'
   container.appendChild(canvasSource)
 
   var canvasBlended = document.createElement('canvas');
-  canvasBlended.setAttribute("width","640")
+  canvasBlended.setAttribute("width","840")
   canvasBlended.setAttribute("height","480");
   canvasBlended.id = 'canvas-blended'
   canvasBlended.setAttribute("style","display:none;");
@@ -80,7 +80,6 @@
       var hitTarget = document.createElement('img')
       hitTarget.setAttribute('src', hitTargets[i].graphic)
       hitTarget.setAttribute("style","position: absolute; left: " + hitTargets[i].x + "px; top: " + hitTargets[i].y + "px; width:" + hitTargets[i].width + "px;  height:" + hitTargets[i].height + "px;");
-      hitTarget.setAttribute("style", hitTarget.getAttribute('style') + "border:solid 1px red");
       console.log('adding ' + hitTarget)
       container.appendChild(hitTarget)
     }
