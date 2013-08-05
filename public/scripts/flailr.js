@@ -6,6 +6,8 @@ var Flailr = function () {
   flailr.containerId = '';
   flailr.hitTargets = [];
   flailr.sensitivity = 60;
+  flailr.showVideo = true;
+  flailr.showDifferenceCanvas = false;
 
   flailr.start = function(){
     var self = this;
