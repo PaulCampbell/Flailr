@@ -1,3 +1,6 @@
+== WORK IN PROGRESS - NOT READY FOR USE YET!
+
+
 == Flailr js
 
 ### verb
@@ -98,27 +101,39 @@ Now you just call start:
 
 
 ### All together now
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Drums example</title>
+      <script src='/scripts/flailr.js'></script>
+
+    </head>
     <body>
       <div id='container'>
+
       </div>
-      <script>
-          var flailr = new Flailr();
-          flailr.containerId = 'container';
-          flailr.showVideo = true;
-          flailr.showDifferenceCanvas = false;
-          flailr.width = 640;
-          flailr.height = 480;
-          flailr.sensitivity = 100;
-          flailr.hitTargets = [
-                {x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
-                {x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
-              ];
-          flailr.addEventListener('targetHit', function(e) {
-            console.log('target-hit: ' + JSON.stringify(e))
-          })
-          flailr.start();
-      </script>
     </body>
+    <script>
+      var flailr = new Flailr();
+      flailr.containerId = 'container';
+      flailr.showVideo = true;
+      flailr.showDifferenceCanvas = false;
+      flailr.width = 640;
+      flailr.height = 480;
+      flailr.sensitivity = 150;
+      flailr.hitTargets = [
+            {id: 'snare', x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
+            {id: 'tom', x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
+          ];
+
+      flailr.addEventListener('targetHit', function(e) {
+        console.log('target-hit: ' + JSON.stringify(e))
+      })
+
+      flailr.start();
+
+    </script>
+    </html>
 
 _As noted - check the exmples folder!_
 
