@@ -5,167 +5,166 @@
 
 </head>
 <body>
-  <div id="motion-capture">
+<div id="motion-capture">
 
-  </div>
+</div>
 
 
 <script>
-(function(document) {
-	var webcamError = function(e) {
-		alert('Webcam error!', e);
-	};
+  (function (document) {
+    var webcamError = function (e) {
+      alert('Webcam error!', e);
+    };
 
-  // add all the bits to the page.
-  var container = document.getElementById('motion-capture')
+    // add all the bits to the page.
+    var container = document.getElementById('motion-capture')
 
-  var video = document.createElement('video')
-  video.id = 'webcam'
-  video.setAttribute("width","840") ;
-  video.setAttribute("autoplay","autoplay") ;
-  video.setAttribute("height","480");
-  video.setAttribute("style","display:none;");
-  container.appendChild(video)
+    var video = document.createElement('video')
+    video.id = 'webcam'
+    video.setAttribute("width", "840");
+    video.setAttribute("autoplay", "autoplay");
+    video.setAttribute("height", "480");
+    video.setAttribute("style", "display:none;");
+    container.appendChild(video)
 
-  var canvasSource = document.createElement('canvas');
-  canvasSource.setAttribute("width","840")
-  canvasSource.setAttribute("height","480");
-  canvasSource.id = 'canvas-source'
-  container.appendChild(canvasSource)
+    var canvasSource = document.createElement('canvas');
+    canvasSource.setAttribute("width", "840")
+    canvasSource.setAttribute("height", "480");
+    canvasSource.id = 'canvas-source'
+    container.appendChild(canvasSource)
 
-  var canvasBlended = document.createElement('canvas');
-  canvasBlended.setAttribute("width","840")
-  canvasBlended.setAttribute("height","480");
-  canvasBlended.id = 'canvas-blended'
-  canvasBlended.setAttribute("style","display:none;");
-  container.appendChild(canvasBlended)
-
-
-
-	if (navigator.getUserMedia) {
-		navigator.getUserMedia({audio: false, video: true}, function(stream) {
-			video.src = stream;
-			initialize();
-		}, webcamError);
-	} else if (navigator.webkitGetUserMedia) {
-		navigator.webkitGetUserMedia({audio: false, video: true}, function(stream) {
-			video.src = window.webkitURL.createObjectURL(stream);
-			initialize();
-		}, webcamError);
-	} else {
-		alert('browser does not support getUserMedia')
-	}
-
-	var hitTargets = [
-    {x:70, y:350, width:120, height:120, graphic: '/images/snare.png'},
-    {x:400, y:350, width:120, height:120, graphic: '/images/tom.png'}
-  ];
-
-	var timeOut, lastImageData;
-	var canvasSource = document.getElementById('canvas-source');
-	var canvasBlended = document.getElementById('canvas-blended')
-
-	var contextSource = canvasSource.getContext('2d');
-	var contextBlended = canvasBlended.getContext('2d');
+    var canvasBlended = document.createElement('canvas');
+    canvasBlended.setAttribute("width", "840")
+    canvasBlended.setAttribute("height", "480");
+    canvasBlended.id = 'canvas-blended'
+    canvasBlended.setAttribute("style", "display:none;");
+    container.appendChild(canvasBlended)
 
 
-	// mirror video
-	contextSource.translate(canvasSource.width, 0);
-	contextSource.scale(-1, 1);
-
-
-	function initialize() {
-		// add hitTargets to page...
-    for (var i = 0; i < hitTargets.length; i++) {
-      var hitTarget = document.createElement('img')
-      hitTarget.setAttribute('src', hitTargets[i].graphic)
-      hitTarget.setAttribute("style","position: absolute; left: " + hitTargets[i].x + "px; top: " + hitTargets[i].y + "px; width:" + hitTargets[i].width + "px;  height:" + hitTargets[i].height + "px;");
-      console.log('adding ' + hitTarget)
-      container.appendChild(hitTarget)
+    if (navigator.getUserMedia) {
+      navigator.getUserMedia({audio: false, video: true}, function (stream) {
+        video.src = stream;
+        initialize();
+      }, webcamError);
+    } else if (navigator.webkitGetUserMedia) {
+      navigator.webkitGetUserMedia({audio: false, video: true}, function (stream) {
+        video.src = window.webkitURL.createObjectURL(stream);
+        initialize();
+      }, webcamError);
+    } else {
+      alert('browser does not support getUserMedia')
     }
-		start();
-	}
+
+    var hitTargets = [
+      {x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
+      {x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
+    ];
+
+    var timeOut, lastImageData;
+    var canvasSource = document.getElementById('canvas-source');
+    var canvasBlended = document.getElementById('canvas-blended')
+
+    var contextSource = canvasSource.getContext('2d');
+    var contextBlended = canvasBlended.getContext('2d');
 
 
-	function start() {
-		update();
-	}
-
-	function update() {
-		drawVideo();
-		blend();
-		checkAreas();
-		timeOut = setTimeout(update, 1000/60);
-	}
-
-	function drawVideo() {
-		contextSource.drawImage(video, 0, 0, video.width, video.height);
-	}
-
-	function blend() {
-		var width = canvasSource.width;
-		var height = canvasSource.height;
-		// get webcam image data
-		var sourceData = contextSource.getImageData(0, 0, width, height);
-		// create an image if the previous image doesn’t exist
-		if (!lastImageData) lastImageData = contextSource.getImageData(0, 0, width, height);
-		// create a ImageData instance to receive the blended result
-		var blendedData = contextSource.createImageData(width, height);
-		// blend the 2 images
-		differenceAccuracy(blendedData.data, sourceData.data, lastImageData.data);
-		// draw the result in a canvas
-		contextBlended.putImageData(blendedData, 0, 0);
-		// store the current webcam image
-		lastImageData = sourceData;
-	}
-
-	function fastAbs(value) {
-		return (value ^ (value >> 31)) - (value >> 31);
-	}
-
-	function threshold(value) {
-		return (value > 0x15) ? 0xFF : 0;
-	}
+    // mirror video
+    contextSource.translate(canvasSource.width, 0);
+    contextSource.scale(-1, 1);
 
 
-	function differenceAccuracy(target, data1, data2) {
-		if (data1.length != data2.length) return null;
-		var i = 0;
-		while (i < (data1.length * 0.25)) {
-			var average1 = (data1[4*i] + data1[4*i+1] + data1[4*i+2]) / 3;
-			var average2 = (data2[4*i] + data2[4*i+1] + data2[4*i+2]) / 3;
-			var diff = threshold(fastAbs(average1 - average2));
-			target[4*i] = diff;
-			target[4*i+1] = diff;
-			target[4*i+2] = diff;
-			target[4*i+3] = 0xFF;
-			++i;
-		}
-	}
-
-	function checkAreas() {
-		for (var r=0; r<hitTargets.length; ++r) {
-			// get the pixels in a note area from the blended image
-			var blendedData = contextBlended.getImageData(hitTargets[r].x, hitTargets[r].y, hitTargets[r].width, hitTargets[r].height);
-			var i = 0;
-			var average = 0;
-			// loop over the pixels
-			while (i < (blendedData.data.length * 0.25)) {
-				// make an average between the color channel
-				average += (blendedData.data[i*4] + blendedData.data[i*4+1] + blendedData.data[i*4+2]) / 3;
-				++i;
-			}
-			// calculate an average between of the color values of the note area
-			average = Math.round(average / (blendedData.data.length * 0.25));
-			if (average > 40) {
-				console.log({targetIndex:r, vigour: average})
-
-			}
-		}
-	}
+    function initialize() {
+      // add hitTargets to page...
+      for (var i = 0; i < hitTargets.length; i++) {
+        var hitTarget = document.createElement('img')
+        hitTarget.setAttribute('src', hitTargets[i].graphic)
+        hitTarget.setAttribute("style", "position: absolute; left: " + hitTargets[i].x + "px; top: " + hitTargets[i].y + "px; width:" + hitTargets[i].width + "px;  height:" + hitTargets[i].height + "px;");
+        console.log('adding ' + hitTarget)
+        container.appendChild(hitTarget)
+      }
+      start();
+    }
 
 
-})(document);
+    function start() {
+      update();
+    }
+
+    function update() {
+      drawVideo();
+      blend();
+      checkAreas();
+      timeOut = setTimeout(update, 1000 / 60);
+    }
+
+    function drawVideo() {
+      contextSource.drawImage(video, 0, 0, video.width, video.height);
+    }
+
+    function blend() {
+      var width = canvasSource.width;
+      var height = canvasSource.height;
+      // get webcam image data
+      var sourceData = contextSource.getImageData(0, 0, width, height);
+      // create an image if the previous image doesn’t exist
+      if (!lastImageData) lastImageData = contextSource.getImageData(0, 0, width, height);
+      // create a ImageData instance to receive the blended result
+      var blendedData = contextSource.createImageData(width, height);
+      // blend the 2 images
+      differenceAccuracy(blendedData.data, sourceData.data, lastImageData.data);
+      // draw the result in a canvas
+      contextBlended.putImageData(blendedData, 0, 0);
+      // store the current webcam image
+      lastImageData = sourceData;
+    }
+
+    function fastAbs(value) {
+      return (value ^ (value >> 31)) - (value >> 31);
+    }
+
+    function threshold(value) {
+      return (value > 0x15) ? 0xFF : 0;
+    }
+
+
+    function differenceAccuracy(target, data1, data2) {
+      if (data1.length != data2.length) return null;
+      var i = 0;
+      while (i < (data1.length * 0.25)) {
+        var average1 = (data1[4 * i] + data1[4 * i + 1] + data1[4 * i + 2]) / 3;
+        var average2 = (data2[4 * i] + data2[4 * i + 1] + data2[4 * i + 2]) / 3;
+        var diff = threshold(fastAbs(average1 - average2));
+        target[4 * i] = diff;
+        target[4 * i + 1] = diff;
+        target[4 * i + 2] = diff;
+        target[4 * i + 3] = 0xFF;
+        ++i;
+      }
+    }
+
+    function checkAreas() {
+      for (var r = 0; r < hitTargets.length; ++r) {
+        // get the pixels in a note area from the blended image
+        var blendedData = contextBlended.getImageData(hitTargets[r].x, hitTargets[r].y, hitTargets[r].width, hitTargets[r].height);
+        var i = 0;
+        var average = 0;
+        // loop over the pixels
+        while (i < (blendedData.data.length * 0.25)) {
+          // make an average between the color channel
+          average += (blendedData.data[i * 4] + blendedData.data[i * 4 + 1] + blendedData.data[i * 4 + 2]) / 3;
+          ++i;
+        }
+        // calculate an average between of the color values of the note area
+        average = Math.round(average / (blendedData.data.length * 0.25));
+        if (average > 40) {
+          console.log({targetIndex: r, vigour: average})
+
+        }
+      }
+    }
+
+
+  })(document);
 
 </script>
 </body>

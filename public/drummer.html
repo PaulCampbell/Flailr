@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Drums example</title>
+  <script src='/scripts/flailr.js'></script>
+
+</head>
+<body>
+  <div id='container'>
+
+  </div>
+</body>
+<script>
+
+  var flailr = new Flailr();
+  flailr.containerId = 'container';
+  flailr.showVideo = true;
+  flailr.showDiffernceCanvas = false;
+  flailr.width = 640;
+  flailr.height = 480;
+  flailr.sensitivity = 100;
+  flailr.hitTargets = [
+        {x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
+        {x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
+      ];
+
+  flailr.start();
+
+</script>
+</html>
