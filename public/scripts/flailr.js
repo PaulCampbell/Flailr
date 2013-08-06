@@ -4,6 +4,8 @@ var Flailr = function () {
   var flailr = {};
   var canvasSource, video, canvasBlended, contextSource, contextBlended, timeOut, lastImageData, container;
 
+  flailr.width = 640
+  flailr.height = 480
   flailr.containerId = '';
   flailr.hitTargets = [];
   flailr.sensitivity = 60;
@@ -26,21 +28,21 @@ var Flailr = function () {
     // Add all the required elements to the page...
     video = document.createElement('video')
     video.id = 'webcam'
-    video.setAttribute("width", "840");
+    video.setAttribute("width", self.width.toString());
     video.setAttribute("autoplay", "autoplay");
-    video.setAttribute("height", "480");
+    video.setAttribute("height", self.height.toString());
     video.setAttribute("style", "display:none;");
     container.appendChild(video)
 
     canvasSource = document.createElement('canvas');
-    canvasSource.setAttribute("width", "840")
-    canvasSource.setAttribute("height", "480");
+    canvasSource.setAttribute("width", self.width.toString())
+    canvasSource.setAttribute("height", self.height.toString());
     canvasSource.id = 'canvas-source'
     container.appendChild(canvasSource)
 
     canvasBlended = document.createElement('canvas');
-    canvasBlended.setAttribute("width", "840")
-    canvasBlended.setAttribute("height", "480");
+    canvasBlended.setAttribute("width", self.width.toString())
+    canvasBlended.setAttribute("height", self.height.toString());
     canvasBlended.id = 'canvas-blended'
     canvasBlended.setAttribute("style", "display:none;");
     container.appendChild(canvasBlended)
@@ -84,6 +86,9 @@ var Flailr = function () {
     // add hitTargets to the canvas...
     for (var i = 0; i < self.hitTargets.length; i++) {
       var hitTarget = document.createElement('img')
+      if(self.hitTargets[i].id) {
+        hitTarget.id = self.hitTargets[i].id;
+      }
       if(self.hitTargets[i].graphic) {
         hitTarget.setAttribute('src', self.hitTargets[i].graphic)
       }
@@ -99,6 +104,9 @@ var Flailr = function () {
 
 
   function start(self) {
+    if(!self.showVideo) {
+      document.getElementById('canvas-source').style.opacity = '0'
+    }
     update(self);
   }
 

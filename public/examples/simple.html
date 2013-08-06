@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Drums example</title>
+  <title>Simple example</title>
   <script src='/scripts/flailr.js'></script>
 
 </head>
@@ -25,6 +25,12 @@
 
   flailr.addEventListener('targetHit', function(e) {
     console.log('target-hit: ' + JSON.stringify(e))
+    var hitTarget = document.getElementById(e.hitTarget.id)
+    hitTarget.style.backgroundColor = 'red';
+    setTimeout(function(){
+      hitTarget.style.backgroundColor = 'transparent';
+    }, 300)
+
   })
 
   flailr.start();

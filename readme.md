@@ -1,4 +1,4 @@
-== Flailr js
+# Flailr js
 
 ### verb
 
@@ -24,7 +24,7 @@ Simple.
 
 ## But how do you actually make it work?
 
-So there are a few examples in the [examples folder](tree/master/public/examples) that are also running online at http://flailr.jit.su
+So there are a few examples in the [examples folder](https://github.com/PaulCampbell/Flailr/tree/master/public/examples) that are also running online at http://flailr.jit.su
 
 Basically, include the script on your page:
 
@@ -132,7 +132,7 @@ Now you just call start:
     </script>
     </html>
 
-_As noted - check the [examples folder](tree/master/public/examples)!_
+_As noted - check the [examples folder](https://github.com/PaulCampbell/Flailr/tree/master/public/examples)!_
 
 ## Todo
 
