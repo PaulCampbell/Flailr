@@ -408,10 +408,10 @@ if ("ontouchstart" in document.documentElement) {
 
   flailr.addEventListener('targetHit', function(e) {
     if(e.hitTarget.id=='go-left') {
-    api.next()
+    api.prev()
     }
     else if (e.hitTarget.id == 'go-right') {
-      api.prev()
+      api.next()
     }
 
   })

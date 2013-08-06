@@ -2,25 +2,60 @@
 <html>
 <head>
   <title>Flailr</title>
+  <style>
+
+
+    body, p {
+    font-family:  Georgia, serif;
+    }
+    .container { max-width:1000px; margin:auto}
+  </style>
 </head>
 <body>
+<div class='container'>
 <a href="https://github.com/PaulCampbell/Flailr"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 	<h1>
 		Flailr js
 	</h1>
 
-  <section>
-    <h1>Flail</h1>
-    <div>verb</div>
-    <div>Wave or swing or cause to wave or swing wildly.</div>
-  </section>
+
+<article class="markdown-body entry-content" itemprop="mainContentOfPage">
+
+<h3>Flail<br/><small>verb</small></h3>
+
+<p>Wave or swing or cause to wave or swing wildly.</p>
+
+<h2>
+<a name="motion-detection-from-your-webcam-in-your-browser" class="anchor" href="#motion-detection-from-your-webcam-in-your-browser"><span class="octicon octicon-link"></span></a>Motion detection from your webcam. In your browser.</h2>
+
+<p>Flailr js is a library for those of us who haven't got a Leap Motion, but want to interact with the browser by wildly
+waving their arms around.</p>
+
+<h2>
+<a name="how-does-is-work" class="anchor" href="#how-does-is-work"><span class="octicon octicon-link"></span></a>How does is work?</h2>
+
+<p>The basic premise is as follows:</p>
+
+<ul>
+<li>We take a feed from the web cam using <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator.getUserMedia">navigator.getUserMedia</a>
+</li>
+<li>We add a canvas to the page and stream the video onto it.</li>
+<li>We add some <code>hitTargets</code> to the canvas (these are basically areas on the canvas that will shout if there has been significant movement over them.</li>
+<li>We do some fancy <a href="http://en.wikipedia.org/wiki/Blend_modes#Difference"><em>blend mode difference</em></a> business to check for movement in the camera and raise an event if there is enough movement over one of our <code>hitTargets</code>
+</li>
+</ul>
+  <p>Simple.</p>
+
+  <a href='https://github.com/PaulCampbell/Flailr'>READ MORE AT GITHUB</a>
+</article>
+
   <h2>Grab the script</h2>
   <ul>
     <li><a href='https://github.com/PaulCampbell/Flailr/blob/master/public/scripts/flailr.js'>Flailr debug</a></li>
-    <a href='https://github.com/PaulCampbell/Flailr/blob/master/flailr.min.js'>Flailr min</a>
+    <li><a href='https://github.com/PaulCampbell/Flailr/blob/master/flailr.min.js'>Flailr min</li></a>
   </ul>
-  <a href='https://github.com/PaulCampbell/Flailr/blob/master/public/scripts/flailr.js'>Flailr debug</a>
-  <h2>Examples</h2>
+  <h2>Examples (The fun bits)</h2>
+  You probably want to try these in a recent version of chrome.
   <ul>
     <li><a href='/examples/simple.html'>Simple example... 2 hit targets, log events to the console.</a></li>
     <li><a href='/examples/drummer.html'>Drums example (see the stream on screen. Hit the drums.)</a></li>
@@ -28,6 +63,6 @@
       presentation back and forth by waving around like a crazy person.</a>
     <div>This is actually just the impress demo. I've highlighted the hit areas so you know roughly where to wave your arms like a crazy person.</div></li>
   </ul>
-
+</div>
 </body>
 </html>
