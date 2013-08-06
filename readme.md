@@ -1,7 +1,7 @@
 # Flailr js
 
-## Flail
-### verb
+
+### Flail: verb
 
 Wave or swing or cause to wave or swing wildly.
 
