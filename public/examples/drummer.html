@@ -3,7 +3,7 @@
 <head>
   <title>Drums example</title>
   <script src='/scripts/flailr.js'></script>
-
+  <script src="/libs/buffer-loader.js"></script>
 </head>
 <body>
   <div id='container'>
@@ -11,25 +11,90 @@
   </div>
 </body>
 <script>
-  var flailr = new Flailr();
-  flailr.containerId = 'container';
-  flailr.showVideo = true;
-  flailr.showDifferenceCanvas = false;
-  flailr.width = 640;
-  flailr.height = 480;
-  flailr.sensitivity = 150;
-  flailr.hitTargets = [
-      {id: 'drum', x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
-      {id: 'snare', x: 200, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
-      {id: 'tom', x: 360, y: 350, width: 120, height: 120, graphic: '/images/tom.png'},
-      {id: 'thunderbird', x: 520, y: 350, width: 120, height: 120, graphic: '/images/thunderbird.png'}
-    ];
+  (function(){
+    var flailr = new Flailr();
+    flailr.containerId = 'container';
+    flailr.showVideo = true;
+    flailr.showDifferenceCanvas = false;
+    flailr.width = 640;
+    flailr.height = 480;
+    flailr.sensitivity = 150;
+    flailr.hitTargets = [
+        {id: 'snare', x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
+        {id: 'bigtom', x: 220, y: 350, width: 150, height: 140, graphic: '/images/tom.png'},
+        {id: 'littletom', x: 400, y: 350, width: 90, height: 80, graphic: '/images/tom.png'},
+        {id: 'thunderbird', x: 580, y: 350, width: 120, height: 120, graphic: '/images/thunderbird.png'}
+      ];
 
-  flailr.addEventListener('targetHit', function(e) {
-    console.log('target-hit: ' + JSON.stringify(e))
-  })
 
-  flailr.start();
+    // load up some drum sounds...
+    var AudioContext = (
+      window.AudioContext ||
+      window.webkitAudioContext ||
+      null
+    );
+
+    var soundContext;
+    var bufferLoader;
+
+    soundContext = new AudioContext();
+    bufferLoader = new BufferLoader(soundContext,
+      [
+        '/sounds/snare.mp3',
+        '/sounds/bass.mp3',
+        '/sounds/tom.mp3',
+        '/sounds/kick.mp3'
+      ],
+      finishedLoading
+    );
+    bufferLoader.load();
+
+
+    var drumSounds = []
+
+    function finishedLoading(bufferList) {
+    		for (var i=0; i<4; i++) {
+    			var source = soundContext.createBufferSource();
+    			source.buffer = bufferList[i];
+    			source.connect(soundContext.destination);
+          source.ready=true;
+          drumSounds.push(source)
+        }
+    }
+
+    // play the appropriate sound when a drum is hit...
+    flailr.addEventListener('targetHit', function(e) {
+      switch(e.hitTarget.id) {
+        case 'snare':
+          playSound(drumSounds[0])
+          break;
+        case 'bigtom':
+          playSound(drumSounds[3])
+          break;
+        case 'littletom':
+          playSound(drumSounds[2])
+          break;
+        case 'thunderbird':
+          playSound(drumSounds[1])
+          break;
+      }
+    })
+
+    flailr.start();
+
+
+
+    function playSound(obj) {
+      if(obj.ready) {
+    		var source = soundContext.createBufferSource();
+    		source.buffer = obj.buffer;
+    		source.connect(soundContext.destination);
+    		source.noteOn(0);
+    		obj.ready = false;
+        setTimeout(function(){obj.ready = true}, 300)
+      }
+    }
+  })()
 
 </script>
 </html>
