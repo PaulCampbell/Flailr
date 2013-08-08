@@ -1,13 +1,27 @@
 
+
 describe("Flailr", function() {
 
-  afterEach(function() {
-          document.getElementById('magicDiv').innerHTML = '';
+  var fakeVideo = null;
+  var flailr = null;
+  beforeEach(function() {
+    flailr = new Flailr();
+    flailr.showVideo = false
+    fakeVideo = document.createElement('video')
+    fakeVideo.id = 'webcam'
+    fakeVideo.setAttribute("width", flailr.width);
+    fakeVideo.setAttribute("autoplay", "autoplay");
+    fakeVideo.setAttribute("height", flailr.height);
+    fakeVideo.src = '/test/test_videos/1.m4v';
+  });
 
-      });
+
+  afterEach(function() {
+      document.getElementById('magicDiv').innerHTML = '';
+  });
 
   it("Adds appropriate canvas elements", function() {
-    var flailr = new Flailr();
+
     flailr.containerId = 'magicDiv'
     flailr.start( document.createElement('video'));
     expect(document.getElementById('canvas-blended')).toBeTruthy();
@@ -15,7 +29,7 @@ describe("Flailr", function() {
   });
 
   it("given a single hit target, when motion detected, hit event raised", function() {
-    var flailr = new Flailr();
+
     flailr.containerId = 'magicDiv'
     flailr.showDifferenceCanvas = true;
     var targetHit = 0;
@@ -28,14 +42,8 @@ describe("Flailr", function() {
     console.log (targetHit)
     })
 
-    var fakevideo = document.createElement('video')
-    fakevideo.id = 'webcam'
-    fakevideo.setAttribute("width", flailr.width);
-    fakevideo.setAttribute("autoplay", "autoplay");
-    fakevideo.setAttribute("height", flailr.height);
-    fakevideo.src = '/test/test_videos/1.m4v';
 
-    flailr.start(fakevideo);
+    flailr.start(fakeVideo);
 
     waits(2000)
     runs(function () {
@@ -43,8 +51,8 @@ describe("Flailr", function() {
     });
   })
 
-  it("should not rapid fire target hits!", function() {
-    var flailr = new Flailr();
+  it("should not rapid fire target hits! (i.e. respect maxHitsPerSecond)", function() {
+
     flailr.containerId = 'magicDiv'
     flailr.showDifferenceCanvas = true;
     flailr.maxHitsPerSecond = 1
@@ -55,21 +63,14 @@ describe("Flailr", function() {
 
     flailr.addEventListener('targetHit', function(e) {
       targetHit =  targetHit + 1;
-    console.log (targetHit)
+      console.log (targetHit)
     })
-
-    var fakevideo = document.createElement('video')
-    fakevideo.id = 'webcam'
-    fakevideo.setAttribute("width", flailr.width);
-    fakevideo.setAttribute("autoplay", "autoplay");
-    fakevideo.setAttribute("height", flailr.height);
-    fakevideo.src = '/test/test_videos/1.m4v';
-
-    flailr.start(fakevideo);
+console.log(fakeVideo)
+    flailr.start(fakeVideo);
 
     waits(2000)
     runs(function () {
-    expect(targetHit).toBeLessThan(3)
+      expect(targetHit).toBeLessThan(3)
     });
   });
 })

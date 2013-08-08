@@ -77,6 +77,7 @@ var Flailr = function () {
     }
     else {
       video = fakeVideo;
+      video.setAttribute("style", "display:none;");
       container.appendChild(video);
       initialize(self);
     }
