@@ -14,7 +14,7 @@
   var flailr = new Flailr();
   flailr.containerId = 'container';
   flailr.showVideo = true;
-  flailr.showDifferenceCanvas = false;
+  flailr.showDifferenceCanvas = true;
   flailr.width = 640;
   flailr.height = 480;
   flailr.sensitivity = 100;
@@ -30,10 +30,10 @@
     setTimeout(function(){
       hitTarget.style.backgroundColor = 'transparent';
     }, 300)
-
   })
 
   flailr.start();
+
 
 </script>
 </html>

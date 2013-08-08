@@ -11,6 +11,7 @@ var Flailr = function () {
   flailr.sensitivity = 60;
   flailr.showVideo = true;
   flailr.showDifferenceCanvas = false;
+  flailr.maxHitsPerSecond = 10 // per second
 
   flailr.addEventListener = function(type,listener) {
     eventListeners.push({type:type, listener: listener})
@@ -18,22 +19,15 @@ var Flailr = function () {
 
   var eventListeners = [];
 
-  flailr.start = function(){
+  flailr.start = function(fakeVideo){
     var self = this;
 
     container = document.getElementById(flailr.containerId)
     if(!container) {
       container = document.getElementsByTagName('body')[0]
     }
-    // Add all the required elements to the page...
-    video = document.createElement('video')
-    video.id = 'webcam'
-    video.setAttribute("width", self.width.toString());
-    video.setAttribute("autoplay", "autoplay");
-    video.setAttribute("height", self.height.toString());
-    video.setAttribute("style", "display:none;");
-    container.appendChild(video)
 
+    // Add all the required elements to the page...
     canvasSource = document.createElement('canvas');
     canvasSource.setAttribute("width", self.width.toString())
     canvasSource.setAttribute("height", self.height.toString());
@@ -58,6 +52,15 @@ var Flailr = function () {
     contextSource.translate(canvasSource.width, 0);
     contextSource.scale(-1, 1);
 
+    if(!fakeVideo) {
+        video = document.createElement('video')
+        video.id = 'webcam'
+        video.setAttribute("width", self.width.toString());
+        video.setAttribute("autoplay", "autoplay");
+        video.setAttribute("height", self.height.toString());
+        video.setAttribute("style", "display:none;");
+        container.appendChild(video)
+
     if (navigator.getUserMedia) {
       navigator.getUserMedia({audio: false, video: true}, function (stream) {
         video.src = stream;
@@ -70,6 +73,12 @@ var Flailr = function () {
       }, webcamError);
     } else {
       alert('browser does not support getUserMedia')
+    }
+    }
+    else {
+      video = fakeVideo;
+      container.appendChild(video);
+      initialize(self);
     }
 
 
@@ -85,6 +94,7 @@ var Flailr = function () {
   function initialize(self) {
     // add hitTargets to the canvas...
     for (var i = 0; i < self.hitTargets.length; i++) {
+      self.hitTargets[i].ready = true;
       var hitTarget = document.createElement('img')
       if(self.hitTargets[i].id) {
         hitTarget.id = self.hitTargets[i].id;
@@ -96,7 +106,7 @@ var Flailr = function () {
       if(self.hitTargets[i].showOutline) {
         hitTarget.setAttribute("style", "border:solid 1px red; " + hitTarget.getAttribute('style'))
       }
-      console.log('adding ' + hitTarget)
+
       container.appendChild(hitTarget)
     }
     start(self);
@@ -107,6 +117,9 @@ var Flailr = function () {
     if(!self.showVideo) {
       document.getElementById('canvas-source').style.opacity = '0'
     }
+    if(self.showDifferenceCanvas) {
+          document.getElementById('canvas-blended').setAttribute('style', "")
+        }
     update(self);
   }
 
@@ -116,6 +129,7 @@ var Flailr = function () {
     checkAreas(self);
     timeOut = setTimeout(function() {update(self)}, 1000 / 60 );
   }
+
 
   function drawVideo() {
     contextSource.drawImage(video, 0, 0, video.width, video.height);
@@ -188,9 +202,16 @@ var Flailr = function () {
       }
       // calculate an average between of the color values of the note area
       average = Math.round(average / (blendedData.data.length * 0.25));
-      if (average > self.sensitivity) {
+      if (average > self.sensitivity && self.hitTargets[r].ready) {
         raiseEvent('targetHit', {vigour: average, hitTarget: self.hitTargets[r]})
+        self.hitTargets[r].ready = false;
+        resetTarget(self, self.hitTargets[r]);
       }
     }
+
+    function resetTarget(self, target) {
+      setTimeout(function() {target.ready = true}, 1000 * (1 / self.maxHitsPerSecond))
+    }
   }
+
 }
