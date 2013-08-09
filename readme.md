@@ -117,11 +117,6 @@ Now you just call start:
     <script>
       var flailr = new Flailr();
       flailr.containerId = 'container';
-      flailr.showVideo = true;
-      flailr.showDifferenceCanvas = false;
-      flailr.width = 640;
-      flailr.height = 480;
-      flailr.sensitivity = 150;
       flailr.hitTargets = [
             {id: 'snare', x: 70, y: 350, width: 120, height: 120, graphic: '/images/snare.png'},
             {id: 'tom', x: 400, y: 350, width: 120, height: 120, graphic: '/images/tom.png'}
@@ -143,7 +138,6 @@ _As noted - check the [examples folder](https://github.com/PaulCampbell/Flailr/t
  - Improve API (it seems a bit messy to set up a new flailr atm)
  - Do we like the instantiating with the `new` keyword? Possibly replace this?
  - Check out browser support.
- - Figure out how the hell you test a library that depends on web-cam interaction
  - Get it to raise gesture events
    - SwipeRight
    - SwipeLeft

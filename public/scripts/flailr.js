@@ -92,25 +92,30 @@ var Flailr = function () {
   };
 
 
-  function initialize(self) {
-    // add hitTargets to the canvas...
-    for (var i = 0; i < self.hitTargets.length; i++) {
-      self.hitTargets[i].ready = true;
-      var hitTarget = document.createElement('img')
-      if(self.hitTargets[i].id) {
-        hitTarget.id = self.hitTargets[i].id;
-      }
-      if(self.hitTargets[i].graphic) {
-        hitTarget.setAttribute('src', self.hitTargets[i].graphic)
-      }
-      hitTarget.setAttribute("style", "position: absolute; left: " + self.hitTargets[i].x + "px; top: " + self.hitTargets[i].y + "px; width:" + self.hitTargets[i].width + "px;  height:" + self.hitTargets[i].height + "px;");
-      if(self.hitTargets[i].showOutline) {
-        hitTarget.setAttribute("style", "border:solid 1px red; " + hitTarget.getAttribute('style'))
-      }
-
-      container.appendChild(hitTarget)
+  function addHitTargetToCanvas(self, i) {
+    self.hitTargets[i].ready = false;
+    var hitTarget = document.createElement('img')
+    if (self.hitTargets[i].id) {
+      hitTarget.id = self.hitTargets[i].id;
     }
+    if (self.hitTargets[i].graphic) {
+      hitTarget.setAttribute('src', self.hitTargets[i].graphic)
+    }
+    hitTarget.setAttribute("style", "position: absolute; left: " + self.hitTargets[i].x + "px; top: " + self.hitTargets[i].y + "px; width:" + self.hitTargets[i].width + "px;  height:" + self.hitTargets[i].height + "px;");
+    if (self.hitTargets[i].showOutline) {
+      hitTarget.setAttribute("style", "border:solid 1px red; " + hitTarget.getAttribute('style'))
+    }
+    container.appendChild(hitTarget)
+    resetTarget(self,self.hitTargets[i], 500)
+    return hitTarget;
+  }
+
+  function initialize(self) {
     start(self);
+    for (var i = 0; i < self.hitTargets.length; i++) {
+      addHitTargetToCanvas(self, i);
+    }
+
   }
 
 
@@ -209,10 +214,16 @@ var Flailr = function () {
         resetTarget(self, self.hitTargets[r]);
       }
     }
-
-    function resetTarget(self, target) {
-      setTimeout(function() {target.ready = true}, 1000 * (1 / self.maxHitsPerSecond))
+  }
+  function resetTarget(self, target, fixedTime) {
+    var delay = 1000 * (1 / self.maxHitsPerSecond)
+    if(fixedTime) {
+      delay = fixedTime;
     }
+    setTimeout(function() {
+      target.ready = true
+        }
+        , delay)
   }
 
 }
